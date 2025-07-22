@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using static SoulGem;
 using Random = UnityEngine.Random;
 
 public class SoulGemManager : ObjectBehaviour
@@ -10,8 +9,8 @@ public class SoulGemManager : ObjectBehaviour
     private List<SoulGem> _soulGems = new List<SoulGem>();
     private float _gemSpawnRadius = 0.1f;
     private float _attractionRadius = 2f;
-    private float _absorbRadius = 0.2f;
-    private float _soulGemAttractionSpeed = 7f;
+    private float _pickupRadius = 0.26f;
+    private float _soulGemAttractionSpeed = 500f;
     private float _leftTimeLeftBeforeLightFades = 4f;
     public static event Action OnSoulGemCollected;
 
@@ -104,11 +103,11 @@ public class SoulGemManager : ObjectBehaviour
             {
                 var direction = (Player.Instance.Transform.position - soulGem.Transform.position).normalized;
 
-                soulGem.Rigidbody.AddForce(_soulGemAttractionSpeed * direction, ForceMode.Force);
+                soulGem.Rigidbody.AddForce(_soulGemAttractionSpeed * direction * Time.deltaTime, ForceMode.Force);
                 //soulGem.Transform.position = Vector3.Lerp(soulGem.Transform.position, Player.Instance.Transform.position, Time.deltaTime * _soulGemAttractionSpeed);
                 distance = Vector3.Distance(soulGem.Transform.position, Player.Instance.Transform.position);
 
-                if (distance < _absorbRadius)
+                if (distance < _pickupRadius)
                 {
                     OnSoulGemCollected?.Invoke();
                     Destroy(soulGem.gameObject);

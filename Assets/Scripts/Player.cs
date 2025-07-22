@@ -29,6 +29,7 @@ public class Player : ObjectBehaviour
 
     private float _defaultShootCooldown = 0.5f;
     private float _shootCooldownMultiplierOnLevelUp = 0.6f;
+    private float _minShootCooldown = 0.05f;
     private float _shootCooldown
     {
         get
@@ -111,7 +112,7 @@ public class Player : ObjectBehaviour
         UpdatePower();
     }
 
-    private void AddPower(float amount)
+    public void AddPower(float amount)
     {
         _power += amount;
 

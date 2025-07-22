@@ -3,10 +3,21 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
-    public Camera MainCamera { get; private set; }
-    [field: SerializeField] public Assets Assets { get; private set; }
-    public PlayerInput PlayerInput { get; private set; }
 
+    [Header("Game Manipulation Settings")]
+    [SerializeField] private float TimeMultiplier = 1f;
+    [SerializeField] private int MaxFrames = -1;
+    [Space(15)]
+    [SerializeField] private bool _addTime = false;
+    [SerializeField] private float _timeAmount = 100f;
+    [Space(15)]
+    [SerializeField] private bool _addPower = false;
+    [SerializeField] private float _powerAmount = 100f;
+    [field: Space(15)]
+    [field: SerializeField] public Assets Assets { get; private set; }
+
+    public Camera MainCamera { get; private set; }
+    public PlayerInput PlayerInput { get; private set; }
     private bool _isPlayerDead = false;
     public bool IsPlayerDead
     {
@@ -29,6 +40,24 @@ public class GameManager : MonoBehaviour
         Instance = this;
         MainCamera = GameObject.FindWithTag(Tags.MAIN_CAMERA).GetComponent<Camera>();
         PlayerInput = new PlayerInput();
+    }
+
+    private void Update()
+    {
+        Time.timeScale = TimeMultiplier;
+        Application.targetFrameRate = MaxFrames;
+
+        if (_addTime)
+        {
+            _addTime = false;
+            SpawnManager.Instance.AddTime(_timeAmount);
+        }
+
+        if (_addPower)
+        {
+            _addPower = false;
+            Player.Instance.AddPower(_powerAmount);
+        }
     }
 }
 
@@ -54,7 +83,7 @@ public static class Layers
 [System.Serializable]
 public class Assets
 {
-    [Header("Prefabs")]
+    [field: Header("Prefabs")]
     [field: SerializeField] public GameObject ArrowPrefab { get; private set; }
     [field: SerializeField] public GameObject TrapPrefab { get; private set; }
     [field: SerializeField] public GameObject FireBallPrefab { get; private set; }
@@ -63,7 +92,7 @@ public class Assets
     [field: SerializeField] public GameObject QuickEnemyPrefab { get; private set; }
     [field: SerializeField] public GameObject SoulGemPrefab { get; private set; }
     [field: SerializeField] public GameObject PowerGemPrefab { get; private set; }
-    [Header("Sprites")]
+    [field: Header("Sprites")]
     [field: SerializeField] public Sprite BombTexture { get; private set; }
     [field: SerializeField] public Sprite FireBallTexture { get; private set; }
     [field: SerializeField] public Sprite QuadDamageTexture { get; private set; }
@@ -76,6 +105,6 @@ public class Assets
     public Color HasteColor => new Color(0, 0.5f, 1f); // Light blue
     public Color InvisibilityColor => new Color(0.5f, 0.5f, 0.5f, 0.5f); // Semi-transparent gray
     public Color RappidFireColor => Color.green;
-    //[Header("Animations")]
+    //[field: Header("Animations")]
     //[field: SerializeField] public AnimationClip EnemyDeathAnimation { get; private set; }
 }

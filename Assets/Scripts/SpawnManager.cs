@@ -15,14 +15,14 @@ public class SpawnManager : ObjectBehaviour
     private float _maxChanceForDoubleWaves = 0.98f;
 
     private float _corruptionWavesStartTime = 800f;
-    private float _corruptionMaxDifficultyTime = 1400f;
+    private float _corruptionMaxDifficultyTime = 1800f;
     private float _minChanceForCorruption = 0f;
-    private float _maxChanceForCorruption = 0.8f;
+    private float _maxChanceForCorruption = 1f;
 
     private float _corruptionEnemiesStartTime = 700f;
-    private float _corruptEnemiesMaxDifficultyTime = 1400f;
+    private float _corruptEnemiesMaxDifficultyTime = 1800f;
     private float _minChanceForCorruptEnemies = 0f;
-    private float _maxChanceForCorruptEnemies = .3f;
+    private float _maxChanceForCorruptEnemies = .5f;
 
     private float _chanceForDoubleWaves;
     private float _chanceForCorruptionWave;
@@ -33,6 +33,12 @@ public class SpawnManager : ObjectBehaviour
     public float GetTime
     {
         get { return _time; }
+    }
+
+    public void AddTime(float time)
+    {
+        _time += time;
+        _nextSpawnTime += time;
     }
 
     [System.Serializable]

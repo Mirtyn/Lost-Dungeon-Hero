@@ -25,6 +25,9 @@ public class UIManager : ObjectBehaviour
     [SerializeField] private RectTransform _powerMeter;
     [SerializeField] private Vector3 _powerMeterStartPos;
     [SerializeField] private float _powerBarMaxHeight = 530.45f;
+    private float _powerBarSpeed = 2f;
+    private float _lastOverPowerTime = 0f;
+    private float _prevMaxPowerAmount = 100f;
 
     //[SerializeField] private RectTransform _powerDangerBar;
     //private float _powerDangerBarHeight = .1f;
@@ -50,6 +53,8 @@ public class UIManager : ObjectBehaviour
         {
             targetColor = overPowerColor;
             Invoke(nameof(ReturnColor), 1.5f);
+            _lastOverPowerTime = Time.time;
+            _prevMaxPowerAmount = float.Parse(_maxPowerText.text);
         };
 
         //_powerDangerBar.anchoredPosition = new Vector2(_powerDangerBar.anchoredPosition.x, _powerBarMaxHeight * ((Player.Instance.GetMaxPower * _powerDangerBarHeight) / Player.Instance.GetMaxPower));
@@ -91,11 +96,12 @@ public class UIManager : ObjectBehaviour
         _powerText.text = POWER_TEXT_PREFIX + Player.Instance.GetPower.ToString("F0");
 
         float completion = Mathf.Clamp01(Player.Instance.GetPower / Player.Instance.GetMaxPower);
+        var speed = _powerBarSpeed * Time.deltaTime;
 
-        _powerBar.sizeDelta = Vector2.Lerp(_powerBar.sizeDelta, new Vector2(_powerBar.sizeDelta.x, _powerBarMaxHeight * completion), 2f * Time.deltaTime);
+        _powerBar.sizeDelta = Vector2.Lerp(_powerBar.sizeDelta, new Vector2(_powerBar.sizeDelta.x, _powerBarMaxHeight * completion), speed);
         _powerBar.GetComponent<Image>().color = Color.Lerp(normalColor, targetColor, completion);
+        _maxPowerText.text = Mathf.Lerp(_prevMaxPowerAmount, Player.Instance.GetMaxPower, ((Time.time - _lastOverPowerTime) / ((_lastOverPowerTime + _powerBarSpeed) - _lastOverPowerTime))).ToString("F0");
 
-        _maxPowerText.text = Player.Instance.GetMaxPower.ToString("F0");
         //_powerDangerBar.anchoredPosition = Vector2.Lerp(_powerDangerBar.anchoredPosition, new Vector2(_powerDangerBar.anchoredPosition.x, _powerBarMaxHeight * ((Player.Instance.GetMaxPower * _powerDangerBarHeight) / Player.Instance.GetMaxPower)), 5f * Time.deltaTime);
         //_powerOverPowerBar.anchoredPosition = Vector2.Lerp(_powerOverPowerBar.anchoredPosition, new Vector2(_powerOverPowerBar.anchoredPosition.x, _powerBarMaxHeight * ((Player.Instance.GetMaxPower * _powerOverHeightFactor) / Player.Instance.GetMaxPower)), 5f * Time.deltaTime);
 
