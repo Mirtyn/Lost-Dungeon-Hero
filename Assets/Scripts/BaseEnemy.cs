@@ -20,8 +20,8 @@ public abstract class BaseEnemy : ObjectBehaviour
     public Color ThisNormalColor = NormalColor;
 
     public const float CORRUPT_COLOR_R = 1f;
-    public const float CORRUPT_COLOR_G = .65f;
-    public const float CORRUPT_COLOR_B = .85f;
+    public const float CORRUPT_COLOR_G = .15f;
+    public const float CORRUPT_COLOR_B = .6f;
 
     public static readonly Color CorruptColor = new Color(CORRUPT_COLOR_R, CORRUPT_COLOR_G, CORRUPT_COLOR_B);
     public static readonly Color NormalColor = Color.white;
@@ -64,6 +64,8 @@ public abstract class BaseEnemy : ObjectBehaviour
 
         NavMeshAgent.speed = MoveSpeed;
         NavMeshAgent.angularSpeed = RotateSpeed;
+
+        // The lower the priority the more important they are.
         NavMeshAgent.avoidancePriority = AIPriority;
     }
 

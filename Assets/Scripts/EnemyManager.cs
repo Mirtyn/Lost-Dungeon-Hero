@@ -55,7 +55,7 @@ public class EnemyManager : ObjectBehaviour
             enemy.NavMeshAgent.enabled = false;
             enemy.GetComponent<CapsuleCollider>().enabled = false;
             enemy.enabled = false;
-            enemy.Transform.GetChild(0).GetComponent<CreatureAnimator>().PlayDeath();
+            enemy.Transform.GetComponentInChildren<CreatureAnimator>().PlayDeath();
             Destroy(enemy.gameObject, 1f);
 
             OnEnemyDeath?.Invoke(enemy);

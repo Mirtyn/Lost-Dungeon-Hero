@@ -12,13 +12,13 @@ public class FodderEnemy : BaseEnemy
     public const float DEFAULT_ATTACK_DAMAGE = 2f;
     public const float DEFAULT_ATTACK_DISTANCE = 0.4f;
 
-    public const float CORRUPT_HEALTH = 200f;
-    public const float CORRUPT_MOVE_SPEED = 1.5f;
-    public const float CORRUPT_ROTATE_SPEED = 200f;
+    public const float CORRUPT_HEALTH = 300f;
+    public const float CORRUPT_MOVE_SPEED = 1.6f;
+    public const float CORRUPT_ROTATE_SPEED = 300f;
     public const int CORRUPT_AI_PRIORITY = 49;
     public const float CORRUPT_ENERGY_REWARD = 2f;
     public const float CORRUPT_ATTACK_COOLDOWN = 0.5f;
-    public const float CORRUPT_ATTACK_DAMAGE = 3f;
+    public const float CORRUPT_ATTACK_DAMAGE = 4f;
     public const float CORRUPT_ATTACK_DISTANCE = 0.4f;
 
     public override void Init(

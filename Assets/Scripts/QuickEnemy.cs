@@ -12,9 +12,9 @@ public class QuickEnemy : BaseEnemy
     public const float DEFAULT_ATTACK_DAMAGE = 3f;
     public const float DEFAULT_ATTACK_DISTANCE = 0.4f;
 
-    public const float CORRUPT_HEALTH = 200f;
-    public const float CORRUPT_MOVE_SPEED = 2.2f;
-    public const float CORRUPT_ROTATE_SPEED = 350f;
+    public const float CORRUPT_HEALTH = 300f;
+    public const float CORRUPT_MOVE_SPEED = 2.4f;
+    public const float CORRUPT_ROTATE_SPEED = 40f;
     public const int CORRUPT_AI_PRIORITY = 24;
     public const float CORRUPT_ENERGY_REWARD = 4f;
     public const float CORRUPT_ATTACK_COOLDOWN = 0.5f;

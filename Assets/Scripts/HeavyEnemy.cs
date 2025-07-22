@@ -12,13 +12,13 @@ public class HeavyEnemy : BaseEnemy
     public const float DEFAULT_ATTACK_DAMAGE = 8f;
     public const float DEFAULT_ATTACK_DISTANCE = 0.4f;
 
-    public const float CORRUPT_HEALTH = 800f;
-    public const float CORRUPT_MOVE_SPEED = 1f;
-    public const float CORRUPT_ROTATE_SPEED = 200f;
+    public const float CORRUPT_HEALTH = 1000f;
+    public const float CORRUPT_MOVE_SPEED = 1.1f;
+    public const float CORRUPT_ROTATE_SPEED = 250f;
     public const int CORRUPT_AI_PRIORITY = 29;
     public const float CORRUPT_ENERGY_REWARD = 6f;
     public const float CORRUPT_ATTACK_COOLDOWN = 1f;
-    public const float CORRUPT_ATTACK_DAMAGE = 15f;
+    public const float CORRUPT_ATTACK_DAMAGE = 16f;
     public const float CORRUPT_ATTACK_DISTANCE = 0.4f;
 
     public override void Init(

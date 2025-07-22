@@ -19,8 +19,14 @@ public class SpawnManager : ObjectBehaviour
     private float _minChanceForCorruption = 0f;
     private float _maxChanceForCorruption = 0.8f;
 
+    private float _corruptionEnemiesStartTime = 700f;
+    private float _corruptEnemiesMaxDifficultyTime = 1400f;
+    private float _minChanceForCorruptEnemies = 0f;
+    private float _maxChanceForCorruptEnemies = .3f;
+
     private float _chanceForDoubleWaves;
     private float _chanceForCorruptionWave;
+    private float _chanceForCorruptEnemy;
     private float _nextSpawnTime = 3f;
     private int _waveCount;
 
@@ -116,7 +122,7 @@ public class SpawnManager : ObjectBehaviour
             float spawnDelay = 0f;
             for (int i = 0; i < numEnemies; i++)
             {
-                spawnDelay += isDoubleWave ? Random.Range(spawnDelayMin, spawnDelayMax) * 0.66666f : Random.Range(spawnDelayMin, spawnDelayMax);
+                spawnDelay += isDoubleWave ? Random.Range(spawnDelayMin, spawnDelayMax) * 0.6f : Random.Range(spawnDelayMin, spawnDelayMax);
             }
 
             _nextSpawnTime += spawnDelay;
@@ -135,22 +141,29 @@ public class SpawnManager : ObjectBehaviour
         {
             var spawner = _spawnPoints[Random.Range(0, _spawnPoints.Count)];
             var enemyType = GetWeightedRandomEnemyType(difficulty);
+            bool corrupt = isCorruptWave;
+
+            if (_time >= _corruptionEnemiesStartTime && !corrupt)
+            {
+                _chanceForCorruptEnemy = Mathf.Lerp(_minChanceForCorruptEnemies, _maxChanceForCorruptEnemies, (_time - _corruptionEnemiesStartTime) / (_corruptEnemiesMaxDifficultyTime - _corruptionEnemiesStartTime));
+                corrupt = Random.value < _chanceForCorruptEnemy;
+            }
 
             spawner.PlaySpawnAnimation();
 
             if (enemyType == EnemyType.Fodder)
             {
-                EnemyManager.Instance.SpawnFodderEnemy(spawner.SpawnPoint.position, isCorruptWave);
+                EnemyManager.Instance.SpawnFodderEnemy(spawner.SpawnPoint.position, corrupt);
             }
 
             if (enemyType == EnemyType.Heavy)
             {
-                EnemyManager.Instance.SpawnHeavyEnemy(spawner.SpawnPoint.position, isCorruptWave);
+                EnemyManager.Instance.SpawnHeavyEnemy(spawner.SpawnPoint.position, corrupt);
             }
 
             if (enemyType == EnemyType.Quick)
             {
-                EnemyManager.Instance.SpawnQuickEnemy(spawner.SpawnPoint.position, isCorruptWave);
+                EnemyManager.Instance.SpawnQuickEnemy(spawner.SpawnPoint.position, corrupt);
             }
         }
     }
