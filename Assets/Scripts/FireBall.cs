@@ -10,7 +10,7 @@ public class FireBall : ObjectBehaviour
     public float AttackCooldownDelta { get; set; }
     public int PiercingsLeft { get; set; } = 1; // Default number of piercings for the fireball
 
-    public void Init(Transform transform, float speed = 2.2f, float startDamage = 500f, float piercingDamagePenalty = 0.8f, float attackInterval = 0.1f, int maxPiercings = 10)
+    public void Init(Transform transform, float speed = 2.2f, float startDamage = 500f, float piercingDamagePenalty = 0.8f, float attackInterval = 0.2f, int maxPiercings = 10)
     {
         Transform = transform;
         Speed = speed;

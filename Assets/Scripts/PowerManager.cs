@@ -21,7 +21,7 @@ public class PowerManager : ObjectBehaviour
         PowerType.Invisibility,
         PowerType.FireBall,
         PowerType.FireBall,
-        PowerType.RappidFire
+        PowerType.RapidFire
     };
 
     public ActivePower ActivePower { get; private set; } = 0;
@@ -30,13 +30,13 @@ public class PowerManager : ObjectBehaviour
     private const float HASTE_DURATION = 25f;
     private const float RAPIDFIRE_DURATION = 20f;
 
-    private int _enemiesKilledMin = 32;
-    private int _enemiesKilledMax = 42;
+    private int _enemiesKilledMin = 36;
+    private int _enemiesKilledMax = 45;
     private int _enemyKillsRequiredForPower;
 
     private float _pickupRadius = 0.4f;
 
-    private List<Power> _powerGems = new List<Power>();
+    private List<PowerGem> _powerGems = new List<PowerGem>();
 
     public class PowerSlot
     {
@@ -94,7 +94,7 @@ public class PowerManager : ObjectBehaviour
         }
 
         var gemGO = Instantiate(Game.Assets.PowerGemPrefab, pos, Quaternion.LookRotation(Random.insideUnitSphere - pos), this.transform);
-        var powerGem = gemGO.GetComponent<Power>();
+        var powerGem = gemGO.GetComponent<PowerGem>();
         powerGem.Init(powerType);
         _powerGems.Add(powerGem);
     }
@@ -108,8 +108,8 @@ public class PowerManager : ObjectBehaviour
 
     private void HandlePowerGems()
     {
-        List<Power> gemsToRemove = new List<Power>();
-        foreach (Power powerGem in _powerGems)
+        List<PowerGem> gemsToRemove = new List<PowerGem>();
+        foreach (PowerGem powerGem in _powerGems)
         {
             float distance = Vector3.Distance(powerGem.Transform.position, Player.Instance.Transform.position);
             if (distance < _pickupRadius)
@@ -122,7 +122,7 @@ public class PowerManager : ObjectBehaviour
             }
         }
         
-        foreach (Power gem in gemsToRemove)
+        foreach (PowerGem gem in gemsToRemove)
         {
             _powerGems.Remove(gem);
         }
@@ -197,8 +197,8 @@ public class PowerManager : ObjectBehaviour
                 ProjectileManager.Instance.CreateFireBall(Player.Instance.Transform.position, Player.Instance.Transform.forward);
 
                 break;
-            case PowerType.RappidFire:
-                ActivePower |= ActivePower.RappidFire;
+            case PowerType.RapidFire:
+                ActivePower |= ActivePower.RapidFire;
 
                 powerSlot.IsActive = true;
                 powerSlot.Duration = RAPIDFIRE_DURATION;
@@ -236,13 +236,13 @@ public class PowerManager : ObjectBehaviour
             }
         }
 
-        checkPower = PowerType.RappidFire;
-        if (ActivePower.HasFlag(ActivePower.RappidFire))
+        checkPower = PowerType.RapidFire;
+        if (ActivePower.HasFlag(ActivePower.RapidFire))
         {
             if (PowerSlot1.PowerType == checkPower && PowerSlot1.IsActive || PowerSlot2.PowerType == checkPower && PowerSlot2.IsActive || PowerSlot3.PowerType == checkPower && PowerSlot3.IsActive) { }
             else
             {
-                ActivePower &= ~ActivePower.RappidFire;
+                ActivePower &= ~ActivePower.RapidFire;
             }
         }
     }
@@ -268,7 +268,7 @@ public enum PowerType
     Haste,
     Invisibility,
     FireBall,
-    RappidFire,
+    RapidFire,
 }
 
 [Flags]
@@ -276,5 +276,5 @@ public enum ActivePower
 {
     Haste = 1,
     Invisibility = 2,
-    RappidFire = 4,
+    RapidFire = 4,
 }

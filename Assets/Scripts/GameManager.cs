@@ -76,6 +76,6 @@ public class Assets
     public Color HasteColor => new Color(0, 0.5f, 1f); // Light blue
     public Color InvisibilityColor => new Color(0.5f, 0.5f, 0.5f, 0.5f); // Semi-transparent gray
     public Color RappidFireColor => Color.green;
-    [Header("Animations")]
-    [field: SerializeField] public AnimationClip EnemyDeathAnimation { get; private set; }
+    //[Header("Animations")]
+    //[field: SerializeField] public AnimationClip EnemyDeathAnimation { get; private set; }
 }

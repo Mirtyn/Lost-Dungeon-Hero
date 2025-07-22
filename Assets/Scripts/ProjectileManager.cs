@@ -25,16 +25,27 @@ public class ProjectileManager : ObjectBehaviour
         arrow.Init(speed, damage, arrowGO.transform);
         _arrows.Add(arrow);
 
-        float distance = 0.1f;
+        float boxDistance = 0.68f;
+        float rayDistance = 0.1f;
 
-        Ray ray = new Ray(arrowGO.transform.position + (forwardDir * -distance), forwardDir);
+        var arrowTransform = arrow.Transform;
 
-        if (Physics.Raycast(ray, out RaycastHit hitInfo, distance, Layers.ENVIRONMENT | Layers.ENEMY | Layers.ENEMY_WALKABLE_ENVIRONMENT))
+        Ray ray = new Ray(arrowTransform.position + (forwardDir * -rayDistance), forwardDir);
+        Vector3 boxOffset = new Vector3(0, 0f, 0f);
+        Vector3 boxSize = new Vector3(0.135f, 0.06f, 0.34f);
+
+        if (Physics.BoxCast(arrowTransform.position + boxOffset + (forwardDir * -boxDistance), boxSize, forwardDir, out RaycastHit hitInfo, arrowTransform.rotation, boxDistance, Layers.ENEMY))
         {
             if (hitInfo.transform.CompareTag(Tags.ENEMY))
             {
                 OnEnemyHit?.Invoke(hitInfo.transform.GetComponent<BaseEnemy>(), arrow.Damage);
             }
+            Destroy(arrow.gameObject);
+            _arrows.Remove(arrow);
+        }
+
+        if (Physics.Raycast(ray, rayDistance, Layers.ENVIRONMENT | Layers.ENEMY_WALKABLE_ENVIRONMENT))
+        {
             Destroy(arrow.gameObject);
             _arrows.Remove(arrow);
         }
@@ -73,17 +84,26 @@ public class ProjectileManager : ObjectBehaviour
             var moveDir = arrowTransform.forward;
 
             Ray ray = new Ray(arrowTransform.position, moveDir);
+            Vector3 boxOffset = new Vector3(0, 0f, 0.15f);
+            Vector3 boxSize = new Vector3(0.135f, 0.06f, 0.34f);
 
-            if (!Physics.Raycast(ray, out RaycastHit hitInfo, moveDistance, Layers.ENVIRONMENT | Layers.ENEMY | Layers.ENEMY_WALKABLE_ENVIRONMENT))
-            {
-                arrowTransform.position += moveDir * moveDistance;
-            }
-            else
+            if (Physics.BoxCast(arrowTransform.position + boxOffset, boxSize, moveDir, out RaycastHit hitInfo, arrowTransform.rotation, moveDistance, Layers.ENEMY))
             {
                 if (hitInfo.transform.CompareTag(Tags.ENEMY))
                 {
                     OnEnemyHit?.Invoke(hitInfo.transform.GetComponent<BaseEnemy>(), arrow.Damage);
                 }
+                Destroy(arrow.gameObject);
+                arrowsToRemove.Add(arrow);
+                continue;
+            }
+
+            if (!Physics.Raycast(ray, moveDistance, Layers.ENVIRONMENT | Layers.ENEMY_WALKABLE_ENVIRONMENT))
+            {
+                arrowTransform.position += moveDir * moveDistance;
+            }
+            else
+            {
                 Destroy(arrow.gameObject);
                 arrowsToRemove.Add(arrow);
             }
@@ -112,7 +132,6 @@ public class ProjectileManager : ObjectBehaviour
 
             if (trap.AttackCooldownDelta <= 0f)
             {
-
                 var trapTransform = trap.Transform;
                 var boxSize = new Vector3(.4f, 0.5f, 0.4f);
 
@@ -121,14 +140,13 @@ public class ProjectileManager : ObjectBehaviour
                 if (enemyColliders.Length > 0)
                 {
                     trap.AttackCooldownDelta = trap.AttackCooldown;
-                    float damage = trap.Damage / enemyColliders.Length;
 
                     foreach (var collider in enemyColliders)
                     {
                         if (collider.transform.CompareTag(Tags.ENEMY))
                         {
                             var enemy = collider.GetComponent<BaseEnemy>();
-                            OnEnemyHit?.Invoke(enemy, damage);
+                            OnEnemyHit?.Invoke(enemy, trap.Damage);
                         }
                     }
                 }

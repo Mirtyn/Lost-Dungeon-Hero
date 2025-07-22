@@ -19,7 +19,7 @@ public class Spawner : ObjectBehaviour
     private float _targetDoorLocalYPosition;
     private float _doorMoveSpeed = 3f;
 
-    private float returnToNormalDelay = 2f;
+    private float returnToNormalDelay = 2.2f;
 
     private void Start()
     {

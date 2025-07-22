@@ -8,7 +8,7 @@ public class Player : ObjectBehaviour
 
     private readonly float _defaultSpeed = 3.6f;
     private float _moveSpeed 
-    { 
+    {
         get
         {
             if (PowerManager.Instance.ActivePower.HasFlag(ActivePower.Haste))
@@ -17,7 +17,7 @@ public class Player : ObjectBehaviour
             }
 
             return _defaultSpeed;
-        } 
+        }
     }
 
     private float _rotateSpeed = 25f;
@@ -33,7 +33,7 @@ public class Player : ObjectBehaviour
     {
         get
         {
-            if (PowerManager.Instance.ActivePower.HasFlag(ActivePower.RappidFire))
+            if (PowerManager.Instance.ActivePower.HasFlag(ActivePower.RapidFire))
             {
                 return _defaultShootCooldown / 2f;
             }
@@ -48,6 +48,10 @@ public class Player : ObjectBehaviour
     private float _powerDecayRate = 0f;
     private float _maxPowerIncrementation = 150f;
     private float _maxMultuplyAddition = 1.5f;
+
+    private float _shootingSpreadAngle = 0.45f;
+    private float _maxShootingSpreadAngle = 30f;
+    private float _shootingSpreadAngleMultiplier = 2f;
     public int Kills { get; private set; }
     public int StonePickedUp { get; private set; }
     public float GetPower { get { return _power; } }
@@ -120,10 +124,16 @@ public class Player : ObjectBehaviour
 
     private void OverPower()
     {
-        _power += 0.5f;
         _maxPower += _maxPowerIncrementation;
         _maxPower *= _maxMultuplyAddition;
         _defaultShootCooldown *= _shootCooldownMultiplierOnLevelUp;
+        _shootingSpreadAngle *= _shootingSpreadAngleMultiplier;
+
+        if (_shootingSpreadAngle > _maxShootingSpreadAngle)
+        {
+            _shootingSpreadAngle = _maxShootingSpreadAngle;
+        }
+
         _lvlUp.Play();
         OnPlayerOverPower?.Invoke();
     }
@@ -271,10 +281,16 @@ public class Player : ObjectBehaviour
             {
                 hitPosition.y = Transform.position.y;
                 Vector3 forwardDir = (hitPosition - Transform.position).normalized;
+                float degrees = Random.Range(-_shootingSpreadAngle, _shootingSpreadAngle);
+                Quaternion rot = Quaternion.RotateTowards(Quaternion.LookRotation(forwardDir), Quaternion.LookRotation(Vector3.Cross(forwardDir, Vector3.up)), degrees);
+                
+                Vector3 forward = Vector3.forward;
+                forward = rot * forward;
+                Vector3 pos = Transform.position + (forward * _arrowSpawnDistance) + new Vector3(0f, _arrowSpawnHeight, 0f);
 
                 ProjectileManager.Instance.CreateArrow(
-                    Transform.position + forwardDir * _arrowSpawnDistance + new Vector3(0f, _arrowSpawnHeight, 0f),
-                    forwardDir,
+                    pos,
+                    forward,
                     _arrowSpeed,
                     _arrowDamage
                 );

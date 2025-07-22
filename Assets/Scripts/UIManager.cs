@@ -27,10 +27,10 @@ public class UIManager : ObjectBehaviour
     [SerializeField] private float _powerBarMaxHeight = 530.45f;
 
     //[SerializeField] private RectTransform _powerDangerBar;
-    private float _powerDangerBarHeight = .1f;
+    //private float _powerDangerBarHeight = .1f;
     //[SerializeField] private RectTransform _powerOverPowerBar;
     //private float _powerOverHeightFactor = 0.5f;
-    private float _powerOverPowerHeightFactor = 0.9f;
+    //private float _powerOverPowerHeightFactor = 0.9f;
     [SerializeField] private TMP_Text _maxPowerText;
     private Color normalColor => Color.white;
     private Color fullColor => Color.red;
@@ -99,27 +99,27 @@ public class UIManager : ObjectBehaviour
         //_powerDangerBar.anchoredPosition = Vector2.Lerp(_powerDangerBar.anchoredPosition, new Vector2(_powerDangerBar.anchoredPosition.x, _powerBarMaxHeight * ((Player.Instance.GetMaxPower * _powerDangerBarHeight) / Player.Instance.GetMaxPower)), 5f * Time.deltaTime);
         //_powerOverPowerBar.anchoredPosition = Vector2.Lerp(_powerOverPowerBar.anchoredPosition, new Vector2(_powerOverPowerBar.anchoredPosition.x, _powerBarMaxHeight * ((Player.Instance.GetMaxPower * _powerOverHeightFactor) / Player.Instance.GetMaxPower)), 5f * Time.deltaTime);
 
-        // heart beat
-        if (completion < _powerDangerBarHeight)
-        {
-            _powerMeter.localScale = Vector3.LerpUnclamped(_powerMeter.localScale, new Vector3(1.1f, 1.1f, 1.1f), Mathf.Sin(Time.realtimeSinceStartup));
+        //// heart beat
+        //if (completion < _powerDangerBarHeight)
+        //{
+        //    _powerMeter.localScale = Vector3.LerpUnclamped(_powerMeter.localScale, new Vector3(1.1f, 1.1f, 1.1f), Mathf.Sin(Time.realtimeSinceStartup));
 
-        }
-        else
-        {
-            _powerMeter.localScale = Vector3.Lerp(_powerMeter.localScale, Vector3.one, 2f * Time.deltaTime);
-        }
+        //}
+        //else
+        //{
+        //    _powerMeter.localScale = Vector3.Lerp(_powerMeter.localScale, Vector3.one, 2f * Time.deltaTime);
+        //}
 
-        //shake
-        if (completion >= _powerOverPowerHeightFactor)
-        {
-            float shakeIntensity = 20f;
-            _powerMeter.localPosition = Vector3.Lerp(_powerMeter.localPosition, _powerMeterStartPos + new Vector3(Random.insideUnitCircle.x, Random.insideUnitCircle.y, 0f) * shakeIntensity, 3f * Time.deltaTime);
-        }
-        else
-        {
-            _powerMeter.localPosition = Vector3.Lerp(_powerMeter.localPosition, _powerMeterStartPos, 3f * Time.deltaTime);
-        }
+        ////shake
+        //if (completion >= _powerOverPowerHeightFactor)
+        //{
+        //    float shakeIntensity = 20f;
+        //    _powerMeter.localPosition = Vector3.Lerp(_powerMeter.localPosition, _powerMeterStartPos + new Vector3(Random.insideUnitCircle.x, Random.insideUnitCircle.y, 0f) * shakeIntensity, 3f * Time.deltaTime);
+        //}
+        //else
+        //{
+        //    _powerMeter.localPosition = Vector3.Lerp(_powerMeter.localPosition, _powerMeterStartPos, 3f * Time.deltaTime);
+        //}
     }
 
     private void UpdateGemPowerUI()
@@ -171,7 +171,7 @@ public class UIManager : ObjectBehaviour
                 return Game.Assets.BombColor;
             case PowerType.Haste:
                 return Game.Assets.HasteColor;
-            case PowerType.RappidFire:
+            case PowerType.RapidFire:
                 return Game.Assets.RappidFireColor;
             case PowerType.FireBall:
                 return Game.Assets.FireBallColor;
@@ -191,7 +191,7 @@ public class UIManager : ObjectBehaviour
                 return Game.Assets.BombTexture;
             case PowerType.Haste:
                 return Game.Assets.HasteTexture;
-            case PowerType.RappidFire:
+            case PowerType.RapidFire:
                 return Game.Assets.RappidFireTexture;
             case PowerType.FireBall:
                 return Game.Assets.FireBallTexture;

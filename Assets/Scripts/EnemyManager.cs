@@ -33,7 +33,7 @@ public class EnemyManager : ObjectBehaviour
 
     private void Update()
     {
-        HandleEnemyAttacks();       
+        HandleEnemyAttacks();
 
         updateTimerDelta -= Time.deltaTime;
         if (updateTimerDelta > 0f) return;
@@ -124,25 +124,93 @@ public class EnemyManager : ObjectBehaviour
 
     public void SpawnFodderEnemy(Vector3 position)
     {
-        var enemyGO = Instantiate(Game.Assets.FodderEnemyPrefab, position, Quaternion.identity, Transform);
-        var fodderEnemy = enemyGO.GetComponent<FodderEnemy>();
-        fodderEnemy.Init(enemyGO.transform);
-        _enemies.Add(fodderEnemy);
+        SpawnFodderEnemy(position, false);
     }
 
     public void SpawnHeavyEnemy(Vector3 position)
     {
-        var enemyGO = Instantiate(Game.Assets.HeavyEnemyPrefab, position, Quaternion.identity, Transform);
-        var heavyEnemy = enemyGO.GetComponent<HeavyEnemy>();
-        heavyEnemy.Init(enemyGO.transform);
-        _enemies.Add(heavyEnemy);
+        SpawnHeavyEnemy(position, false);
     }
 
     public void SpawnQuickEnemy(Vector3 position)
     {
+        SpawnQuickEnemy(position, false);
+    }
+
+    public void SpawnFodderEnemy(Vector3 position, bool corrupt)
+    {
+        var enemyGO = Instantiate(Game.Assets.FodderEnemyPrefab, position, Quaternion.identity, Transform);
+        var fodderEnemy = enemyGO.GetComponent<FodderEnemy>();
+
+        if (corrupt)
+        {
+            fodderEnemy.Init(
+                enemyGO.transform,
+                FodderEnemy.CORRUPT_HEALTH,
+                FodderEnemy.CORRUPT_MOVE_SPEED,
+                FodderEnemy.CORRUPT_ROTATE_SPEED,
+                FodderEnemy.CORRUPT_AI_PRIORITY,
+                FodderEnemy.CORRUPT_ENERGY_REWARD,
+                FodderEnemy.CORRUPT_ATTACK_COOLDOWN,
+                FodderEnemy.CORRUPT_ATTACK_DAMAGE,
+                corrupt: true);
+        }
+        else
+        {
+            fodderEnemy.Init(enemyGO.transform);
+        }
+        _enemies.Add(fodderEnemy);
+    }
+
+    public void SpawnHeavyEnemy(Vector3 position, bool corrupt)
+    {
+        var enemyGO = Instantiate(Game.Assets.HeavyEnemyPrefab, position, Quaternion.identity, Transform);
+        var heavyEnemy = enemyGO.GetComponent<HeavyEnemy>();
+
+        if (corrupt)
+        {
+            heavyEnemy.Init(
+                enemyGO.transform,
+                HeavyEnemy.CORRUPT_HEALTH,
+                HeavyEnemy.CORRUPT_MOVE_SPEED,
+                HeavyEnemy.CORRUPT_ROTATE_SPEED,
+                HeavyEnemy.CORRUPT_AI_PRIORITY,
+                HeavyEnemy.CORRUPT_ENERGY_REWARD,
+                HeavyEnemy.CORRUPT_ATTACK_COOLDOWN,
+                HeavyEnemy.CORRUPT_ATTACK_DAMAGE,
+                corrupt: true);
+        }
+        else
+        {
+            heavyEnemy.Init(enemyGO.transform);
+        }
+
+        _enemies.Add(heavyEnemy);
+    }
+
+    public void SpawnQuickEnemy(Vector3 position, bool corrupt)
+    {
         var enemyGO = Instantiate(Game.Assets.QuickEnemyPrefab, position, Quaternion.identity, Transform);
         var quickEnemy = enemyGO.GetComponent<QuickEnemy>();
-        quickEnemy.Init(enemyGO.transform);
+
+        if (corrupt)
+        {
+            quickEnemy.Init(
+                enemyGO.transform,
+                QuickEnemy.CORRUPT_HEALTH,
+                QuickEnemy.CORRUPT_MOVE_SPEED,
+                QuickEnemy.CORRUPT_ROTATE_SPEED,
+                QuickEnemy.CORRUPT_AI_PRIORITY,
+                QuickEnemy.CORRUPT_ENERGY_REWARD,
+                QuickEnemy.CORRUPT_ATTACK_COOLDOWN,
+                QuickEnemy.CORRUPT_ATTACK_DAMAGE,
+                corrupt: true);
+        }
+        else
+        {
+            quickEnemy.Init(enemyGO.transform);
+        }
+
         _enemies.Add(quickEnemy);
     }
 }

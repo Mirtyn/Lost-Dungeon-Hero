@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Power : ObjectBehaviour
+public class PowerGem : ObjectBehaviour
 {
     public Transform Transform { get; private set; }
     public PowerType PowerType { get; private set; }
@@ -20,7 +20,7 @@ public class Power : ObjectBehaviour
             case PowerType.Haste:
                 SetColors(Game.Assets.HasteColor);
                 break;
-            case PowerType.RappidFire:
+            case PowerType.RapidFire:
                 SetColors(Game.Assets.RappidFireColor);
                 break;
             case PowerType.FireBall:

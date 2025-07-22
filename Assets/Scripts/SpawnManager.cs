@@ -8,6 +8,19 @@ public class SpawnManager : ObjectBehaviour
     [SerializeField] private List<Spawner> _spawnPoints = new List<Spawner>();
 
     private float _time;
+    private float _maxDifficulty = 500f;
+    private float _doubleWavesStartTime = 600f;
+    private float _doubleWavesMaxDifficultyTime = 1000f;
+    private float _minChanceForDoubleWaves = 0.1f; 
+    private float _maxChanceForDoubleWaves = 0.98f;
+
+    private float _corruptionWavesStartTime = 800f;
+    private float _corruptionMaxDifficultyTime = 1400f;
+    private float _minChanceForCorruption = 0f;
+    private float _maxChanceForCorruption = 0.8f;
+
+    private float _chanceForDoubleWaves;
+    private float _chanceForCorruptionWave;
     private float _nextSpawnTime = 3f;
     private int _waveCount;
 
@@ -27,15 +40,17 @@ public class SpawnManager : ObjectBehaviour
 
     [SerializeField] private List<EnemySpawnInfo> _enemyTypes = new List<EnemySpawnInfo>();
 
-    private float _spawnDelayAddedPerEnemyMin_LowDiff = 1.2f;
+    private float _spawnDelayAddedPerEnemyMin_LowDiff = 1.4f;
     private float _spawnDelayAddedPerEnemyMax_LowDiff = 2.5f;
-    private float _spawnDelayAddedPerEnemyMin_HighDiff = .3f;
-    private float _spawnDelayAddedPerEnemyMax_HighDiff = 1.2f;
+    private float _spawnDelayAddedPerEnemyMin_HighDiff = .085f;
+    private float _spawnDelayAddedPerEnemyMax_HighDiff = .28f;
 
     private int _numEnemiesMin_LowDiff = 1;
-    private int _numEnemiesMax_LowDiff = 4;
-    private int _numEnemiesMin_HighDiff = 15;
-    private int _numEnemiesMax_HighDiff = 25;
+    private int _numEnemiesMax_LowDiff = 2;
+    private int _numEnemiesMin_HighDiff = 27;
+    private int _numEnemiesMax_HighDiff = 43;
+
+    private bool _stopSpawning = false;
 
     private void Awake()
     {
@@ -49,33 +64,68 @@ public class SpawnManager : ObjectBehaviour
 
     private void Update()
     {
+        if (_stopSpawning) return;
+
+        HandleSpawning();
+    }
+
+    private void HandleSpawning()
+    {
+        if (Game.IsPlayerDead)
+        {
+            _stopSpawning = true;
+            // No return, let it spawn once more, cuz why not...
+        }
+
         _time += Time.deltaTime;
 
         if (_time >= _nextSpawnTime)
         {
-            // 5 min (300 sec)
-            float difficulty = Mathf.Clamp01(_time / 300f);
+            float difficulty = _time / _maxDifficulty;
 
             // Interpolate spawn delay and enemy count based on difficulty
             float spawnDelayMin = Mathf.Lerp(_spawnDelayAddedPerEnemyMin_LowDiff, _spawnDelayAddedPerEnemyMin_HighDiff, difficulty);
             float spawnDelayMax = Mathf.Lerp(_spawnDelayAddedPerEnemyMax_LowDiff, _spawnDelayAddedPerEnemyMax_HighDiff, difficulty);
-            int numEnemiesMin = Mathf.RoundToInt(Mathf.Lerp(_numEnemiesMin_LowDiff, _numEnemiesMin_HighDiff, difficulty));
-            int numEnemiesMax = Mathf.RoundToInt(Mathf.Lerp(_numEnemiesMax_LowDiff, _numEnemiesMax_HighDiff, difficulty));
+            int numEnemiesMin = Mathf.RoundToInt(Mathf.LerpUnclamped(_numEnemiesMin_LowDiff, _numEnemiesMin_HighDiff, difficulty));
+            int numEnemiesMax = Mathf.RoundToInt(Mathf.LerpUnclamped(_numEnemiesMax_LowDiff, _numEnemiesMax_HighDiff, difficulty));
+
+            bool isDoubleWave = false;
+            bool isCorruptWave = false;
+            if (_time >= _doubleWavesStartTime)
+            {
+                _chanceForDoubleWaves = Mathf.Lerp(_minChanceForDoubleWaves, _maxChanceForDoubleWaves, (_time - _doubleWavesStartTime) / (_doubleWavesMaxDifficultyTime - _doubleWavesStartTime));
+                isDoubleWave = Random.value < _chanceForDoubleWaves;
+            }
+
+            if (_time >= _corruptionWavesStartTime)
+            {
+                _chanceForCorruptionWave = Mathf.Lerp(_minChanceForCorruption, _maxChanceForCorruption, (_time - _corruptionWavesStartTime) / (_corruptionMaxDifficultyTime - _corruptionWavesStartTime));
+                isCorruptWave = Random.value < _chanceForCorruptionWave;
+            }
 
             int numEnemies = Random.Range(numEnemiesMin, numEnemiesMax + 1);
 
-            // Add spawn delay for each enemy spawned
-            _nextSpawnTime = _time;
-            for (int i = 0; i < numEnemies; i++)
+            if (isDoubleWave)
             {
-                _nextSpawnTime += Random.Range(spawnDelayMin, spawnDelayMax);
+                //Debug.Log($"Double wave spawned at time: {_time}, Wave Count: {_waveCount + 1}");
+                numEnemies *= 2; // Double the number of enemies for double wave
             }
 
-            SpawnWave(numEnemies, difficulty);
+            // Add spawn delay for each enemy spawned
+            _nextSpawnTime = _time;
+            float spawnDelay = 0f;
+            for (int i = 0; i < numEnemies; i++)
+            {
+                spawnDelay += isDoubleWave ? Random.Range(spawnDelayMin, spawnDelayMax) * 0.66666f : Random.Range(spawnDelayMin, spawnDelayMax);
+            }
+
+            _nextSpawnTime += spawnDelay;
+
+            SpawnWave(numEnemies, difficulty, isCorruptWave);
         }
     }
 
-    private void SpawnWave(int numEnemies, float difficulty)
+    private void SpawnWave(int numEnemies, float difficulty, bool isCorruptWave)
     {
         if (_spawnPoints.Count == 0 || _enemyTypes.Count == 0) return;
 
@@ -90,17 +140,17 @@ public class SpawnManager : ObjectBehaviour
 
             if (enemyType == EnemyType.Fodder)
             {
-                EnemyManager.Instance.SpawnFodderEnemy(spawner.SpawnPoint.position);
+                EnemyManager.Instance.SpawnFodderEnemy(spawner.SpawnPoint.position, isCorruptWave);
             }
 
             if (enemyType == EnemyType.Heavy)
             {
-                EnemyManager.Instance.SpawnHeavyEnemy(spawner.SpawnPoint.position);
+                EnemyManager.Instance.SpawnHeavyEnemy(spawner.SpawnPoint.position, isCorruptWave);
             }
 
             if (enemyType == EnemyType.Quick)
             {
-                EnemyManager.Instance.SpawnQuickEnemy(spawner.SpawnPoint.position);
+                EnemyManager.Instance.SpawnQuickEnemy(spawner.SpawnPoint.position, isCorruptWave);
             }
         }
     }
